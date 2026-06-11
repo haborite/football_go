@@ -30,7 +30,7 @@ class SoundManager {
   private bgmNodes: AudioNode[] = [];
   private inGame = false;
 
-  bgmOn = localStorage.getItem(LS_BGM) !== '0';
+  bgmOn = localStorage.getItem(LS_BGM) === '1';
   seOn = localStorage.getItem(LS_SE) !== '0';
 
   // ---- 基盤 ----
@@ -429,7 +429,7 @@ class SoundManager {
       this.bgmNodes = [crowd, lfo, drone];
       this.bgmNextTime = ctx.currentTime + 0.3;
       this.bgmDegree = 4;
-      this.bgmTimer = window.setInterval(() => this.scheduleBgm(), 200);
+      // this.bgmTimer = window.setInterval(() => this.scheduleBgm(), 200);
     } catch {
       /* ignore */
     }
