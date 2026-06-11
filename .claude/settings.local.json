@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npm *)",
+      "PowerShell(Move-Item *)",
+      "PowerShell(npx tsx src/shared/npctest.ts)",
+      "PowerShell(npx tsx src/server/e2etest.ts)",
+      "PowerShell($p = Start-Process -FilePath \"node\" -ArgumentList \"node_modules/tsx/dist/cli.mjs\",\"src/server/server.ts\" -PassThru -WindowStyle Hidden; Start-Sleep -Seconds 3; try { $r = Invoke-WebRequest -Uri \"http://localhost:8787/\" -UseBasicParsing; Write-Output \"HTTP $\\($r.StatusCode\\), length=$\\($r.Content.Length\\)\"; $r.Content.Substring\\(0, 200\\) } finally { Stop-Process -Id $p.Id -Force })",
+      "Skill(run)",
+      "PowerShell(Get-Command *)",
+      "PowerShell(node scripts/browsertest.mjs)",
+      "PowerShell($pids = \\(Get-NetTCPConnection -LocalPort 5173,8787 -State Listen -ErrorAction SilentlyContinue\\).OwningProcess | Sort-Object -Unique; foreach \\($procId in $pids\\) { try { Stop-Process -Id $procId -Force -Confirm:$false } catch {} }; \"stopped: $pids\")",
+      "PowerShell(npx tsx src/shared/arena.ts 40 150 base heur)",
+      "PowerShell(npx tsx src/shared/arena.ts 40 150 heur heur+rave)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(\\(Select-String -Path src\\\\shared\\\\mcts.ts -Pattern 'seenGen\\\\+\\\\+'\\).Count)",
+      "PowerShell(Set-Content *)",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"typecheck OK\" })",
+      "WebSearch"
+    ]
+  }
+}

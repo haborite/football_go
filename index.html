@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23f0f0e8' stroke='%23222' stroke-width='4'/><polygon points='50,28 70,42 62,66 38,66 30,42' fill='%23222'/></svg>"
+    />
+    <title>囲碁サッカー</title>
+  </head>
+  <body>
+    <!-- タイトル画面 -->
+    <div id="screen-title" class="screen">
+      <div class="title-wrap">
+        <h1 class="game-title">囲碁サッカー</h1>
+        <p class="subtitle">サッカーボール型の碁盤球で打つ、球面の純碁。</p>
+
+        <div class="menu-row">
+          <div class="menu-card">
+            <h2>NPC対戦</h2>
+            <label>
+              あなたの手番
+              <select id="npc-color">
+                <option value="black">黒（先攻）</option>
+                <option value="white">白（後攻）</option>
+                <option value="random">ランダム</option>
+              </select>
+            </label>
+            <label>
+              コミ（白へのハンデ）
+              <input id="npc-komi" type="number" step="0.5" value="6.5" />
+            </label>
+            <label>
+              NPCの強さ
+              <select id="npc-level">
+                <option value="600">初級（約0.6秒）</option>
+                <option value="1800">中級（約2秒）</option>
+                <option value="4000" selected>上級（約4秒）</option>
+                <option value="8000">最強（約8秒）</option>
+              </select>
+            </label>
+            <button id="btn-npc-start" class="primary">対局開始</button>
+          </div>
+
+          <div class="menu-card">
+            <h2>オンライン対戦</h2>
+            <label>
+              あなたの手番（部屋を作る側）
+              <select id="online-color">
+                <option value="black">黒（先攻）</option>
+                <option value="white">白（後攻）</option>
+                <option value="random" selected>ランダム</option>
+              </select>
+            </label>
+            <label>
+              コミ（白へのハンデ）
+              <input id="online-komi" type="number" step="0.5" value="6.5" />
+            </label>
+            <button id="btn-create" class="primary">部屋を作る</button>
+            <div class="join-row">
+              <input id="join-code" type="text" placeholder="部屋コード" maxlength="5" autocomplete="off" />
+              <button id="btn-join">参加</button>
+            </div>
+            <div id="online-status"></div>
+          </div>
+        </div>
+
+        <details class="rules">
+          <summary>ルール説明</summary>
+          <ul>
+            <li>碁盤は「碁盤球」：サッカーボール（膨らんだ切頂二十面体）の格子。全60点はすべて対称で、隅も辺もなく、各点から延びる線は3本です。</li>
+            <li>黒が先攻。交互に空点へ石を置きます。</li>
+            <li>呼吸点（隣接する空点）がすべて塞がれた石・連は取り上げられます。</li>
+            <li>自滅手（置いた直後に自分の石が取られる手）は禁止です。</li>
+            <li>同形反復の禁止：過去に現れた盤面と同じ盤面に戻す手は打てません。</li>
+            <li>両者が連続でパスすると終局。<strong>盤上の石の数</strong>（白はコミを加算）が多い方の勝ちです（純碁ルール）。同数は引き分け。</li>
+            <li>「待った」は何回でもできますが、回数が記録され結果画面に表示されます。</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+
+    <!-- 対局画面 -->
+    <div id="screen-game" class="screen hidden">
+      <div id="board-container">
+        <div id="inset-frame"><span>反対側</span></div>
+        <div id="view-buttons">
+          <button data-view="front">正面</button>
+          <button data-view="back">背面</button>
+          <button data-view="right">右</button>
+          <button data-view="left">左</button>
+          <button data-view="top">上</button>
+          <button data-view="bottom">下</button>
+          <button id="btn-view-reset">視点リセット</button>
+        </div>
+        <div id="toast" class="hidden"></div>
+      </div>
+      <aside id="panel">
+        <h1 class="panel-title">囲碁サッカー</h1>
+        <div id="room-line" class="hidden"></div>
+        <div id="status-line">―</div>
+        <div class="count-box">
+          <div class="count black"><span class="stone-icon black"></span><span id="count-black">0</span> 子</div>
+          <div class="count white"><span class="stone-icon white"></span><span id="count-white">0</span> 子 <span id="komi-label"></span></div>
+        </div>
+        <div id="undo-line">待った：黒 0回 ／ 白 0回</div>
+        <div id="replay-controls" class="hidden">
+          <div id="rp-counter">0 / 0</div>
+          <div class="rp-buttons">
+            <button id="btn-rp-first" title="最初へ">⏮</button>
+            <button id="btn-rp-prev" title="1手戻る">◀</button>
+            <button id="btn-rp-next" title="1手進む">▶</button>
+            <button id="btn-rp-last" title="最後へ">⏭</button>
+          </div>
+          <button id="btn-rp-copy">棋譜URLをコピー</button>
+          <p class="rp-hint">← / → キーでも操作できます</p>
+        </div>
+        <div class="button-col">
+          <button id="btn-pass">パス</button>
+          <button id="btn-undo">待った</button>
+          <button id="btn-resign">投了</button>
+          <button id="btn-leave" class="danger">タイトルへ戻る</button>
+        </div>
+        <div id="sound-row">
+          <button id="btn-bgm">♪ BGM: ON</button>
+          <button id="btn-se">🔔 効果音: ON</button>
+        </div>
+        <p class="hint">ドラッグで碁盤球を回転 / ホイールで拡大縮小。<br />左下に反対側が表示されます。</p>
+      </aside>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="overlay-result" class="hidden">
+      <div class="result-card">
+        <h2 id="result-winner">―</h2>
+        <div id="result-detail"></div>
+        <div id="result-undo"></div>
+        <div class="button-row">
+          <button id="btn-review">対局を振り返る</button>
+          <button id="btn-kifu-copy">棋譜URLをコピー</button>
+        </div>
+        <div class="button-row">
+          <button id="btn-rematch" class="primary">もう一度</button>
+          <button id="btn-result-title">タイトルへ</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/client/main.ts"></script>
+  </body>
+</html>
