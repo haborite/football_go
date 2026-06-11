@@ -65,7 +65,7 @@ function handleMessage(ws: WebSocket, raw: string) {
   switch (msg.t) {
     case 'create': {
       if (socketRoom.has(ws)) return;
-      const komi = Number.isFinite(Number(msg.komi)) ? Number(msg.komi) : 6.5;
+      const komi = Number.isFinite(Number(msg.komi)) ? Number(msg.komi) : 0;
       const prefers =
         msg.color === 'black' || msg.color === 'white' ? msg.color : 'random';
       const room: Room = {

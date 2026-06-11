@@ -679,7 +679,7 @@ $('btn-join').addEventListener('click', () => {
 
 function parseKomi(v: string): number {
   const k = parseFloat(v);
-  return Number.isFinite(k) ? k : 6.5;
+  return Number.isFinite(k) ? k : 0;
 }
 
 $('btn-pass').addEventListener('click', doPass);

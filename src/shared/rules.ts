@@ -85,7 +85,7 @@ export class Game {
   // positionKeys[k] = snapshots[k] の盤面キー（同形反復チェック用）
   private positionKeys: string[] = [];
 
-  constructor(komi = 6.5) {
+  constructor(komi = 0) {
     this.komi = komi;
     this.snapshots.push(this.takeSnapshot());
     this.positionKeys.push(this.boardKey(this.board));
