@@ -17,7 +17,12 @@
       "PowerShell(\\(Select-String -Path src\\\\shared\\\\mcts.ts -Pattern 'seenGen\\\\+\\\\+'\\).Count)",
       "PowerShell(Set-Content *)",
       "PowerShell(npx tsc --noEmit; if \\($?\\) { \"typecheck OK\" })",
-      "WebSearch"
+      "WebSearch",
+      "PowerShell(git *)",
+      "PowerShell(npm run *)",
+      "PowerShell(npm test *)",
+      "PowerShell(node scripts/browsertest.mjs; echo \"E2E_EXIT:$LASTEXITCODE\")",
+      "PowerShell(node scripts/tutshots.mjs; echo \"EXIT:$LASTEXITCODE\")"
     ]
   }
 }

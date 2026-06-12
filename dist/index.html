@@ -8,8 +8,8 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23f0f0e8' stroke='%23222' stroke-width='4'/><polygon points='50,28 70,42 62,66 38,66 30,42' fill='%23222'/></svg>"
     />
     <title>囲碁サッカー</title>
-    <script type="module" crossorigin src="/assets/index-4SCdg1SC.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-C0nV8Ln3.css">
+    <script type="module" crossorigin src="/assets/index-2n-OZ619.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DR7EnxPI.css">
   </head>
   <body>
     <!-- タイトル画面 -->
@@ -17,6 +17,10 @@
       <div class="title-wrap">
         <h1 class="game-title">囲碁サッカー</h1>
         <p class="subtitle">サッカーボール型の碁盤球で打つ、球面の純碁。</p>
+
+        <div class="tutorial-row">
+          <button id="btn-tutorial">📖 かんたんルール説明（はじめての方へ）</button>
+        </div>
 
         <div class="menu-row">
           <div class="menu-card">
@@ -149,5 +153,37 @@
       </div>
     </div>
 
+    <!-- 初回訪問の案内 -->
+    <div id="overlay-welcome" class="hidden">
+      <div class="result-card welcome-card">
+        <h2>ようこそ！⚽</h2>
+        <p>
+          「囲碁サッカー」は、サッカーボールの上で遊ぶ<br />
+          とてもシンプルな囲碁です。
+        </p>
+        <p>
+          囲碁を知らなくても大丈夫。<br />
+          1分でわかる、かんたんなルール説明を見ますか？
+        </p>
+        <div class="button-row">
+          <button id="btn-welcome-yes" class="primary">見る（おすすめ）</button>
+          <button id="btn-welcome-no">今はしない</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- かんたんルール説明（スライド） -->
+    <div id="overlay-tutorial" class="hidden">
+      <div class="tut-card">
+        <button id="btn-tut-close" title="閉じる">✕</button>
+        <div id="tut-slides"></div>
+        <div class="tut-nav">
+          <button id="btn-tut-prev">← 戻る</button>
+          <div id="tut-dots"></div>
+          <button id="btn-tut-next" class="primary">次へ →</button>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

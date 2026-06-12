@@ -21,6 +21,7 @@ import {
 } from '../shared/kifu';
 import type { ChildStat } from '../shared/mcts';
 import { sound } from './sound';
+import { initTutorial } from './tutorial';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string): T =>
   document.getElementById(id) as T;
@@ -802,4 +803,7 @@ function tryOpenKifuFromUrl(): boolean {
   return false;
 }
 
-if (!tryOpenKifuFromUrl()) showScreen('title');
+const openedKifu = tryOpenKifuFromUrl();
+if (!openedKifu) showScreen('title');
+// 初めての訪問なら、かんたんルール説明を見るかどうかを聞く（棋譜URLで開いた場合は出さない）
+initTutorial({ firstVisitPrompt: !openedKifu });

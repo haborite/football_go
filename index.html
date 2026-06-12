@@ -16,6 +16,10 @@
         <h1 class="game-title">囲碁サッカー</h1>
         <p class="subtitle">サッカーボール型の碁盤球で打つ、球面の純碁。</p>
 
+        <div class="tutorial-row">
+          <button id="btn-tutorial">📖 かんたんルール説明（はじめての方へ）</button>
+        </div>
+
         <div class="menu-row">
           <div class="menu-card">
             <h2>NPC対戦</h2>
@@ -143,6 +147,38 @@
         <div class="button-row">
           <button id="btn-rematch" class="primary">もう一度</button>
           <button id="btn-result-title">タイトルへ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 初回訪問の案内 -->
+    <div id="overlay-welcome" class="hidden">
+      <div class="result-card welcome-card">
+        <h2>ようこそ！⚽</h2>
+        <p>
+          「囲碁サッカー」は、サッカーボールの上で遊ぶ<br />
+          とてもシンプルな囲碁です。
+        </p>
+        <p>
+          囲碁を知らなくても大丈夫。<br />
+          1分でわかる、かんたんなルール説明を見ますか？
+        </p>
+        <div class="button-row">
+          <button id="btn-welcome-yes" class="primary">見る（おすすめ）</button>
+          <button id="btn-welcome-no">今はしない</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- かんたんルール説明（スライド） -->
+    <div id="overlay-tutorial" class="hidden">
+      <div class="tut-card">
+        <button id="btn-tut-close" title="閉じる">✕</button>
+        <div id="tut-slides"></div>
+        <div class="tut-nav">
+          <button id="btn-tut-prev">← 戻る</button>
+          <div id="tut-dots"></div>
+          <button id="btn-tut-next" class="primary">次へ →</button>
         </div>
       </div>
     </div>

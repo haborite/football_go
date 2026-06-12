@@ -22,6 +22,34 @@ await page.waitForSelector('text=囲碁サッカー', { timeout: 15000 });
 await page.screenshot({ path: 'scripts/shots/01-title.png' });
 console.log('タイトル画面OK → スクリーンショット保存');
 
+// 初回訪問: かんたんルール説明の案内 → スライドを最後までめくる
+console.log('チュートリアルテスト…');
+await page.waitForSelector('#overlay-welcome:not(.hidden)', { timeout: 5000 });
+await page.click('#btn-welcome-yes');
+await page.waitForSelector('#overlay-tutorial:not(.hidden)', { timeout: 5000 });
+const slideCount = await page.locator('.tut-slide').count();
+for (let i = 0; i < slideCount; i++) {
+  const visible = await page.locator('.tut-slide:not(.hidden)').count();
+  if (visible !== 1) {
+    console.error(`NG: 表示中のスライド数が不正: ${visible}`);
+    process.exitCode = 1;
+  }
+  if (i === slideCount - 1) await page.screenshot({ path: 'scripts/shots/08-tutorial.png' });
+  await page.click('#btn-tut-next'); // 最終スライドでは「さっそく対局へ！」で閉じる
+}
+await page.waitForSelector('#overlay-tutorial', { state: 'hidden', timeout: 5000 });
+console.log(`チュートリアルOK（全${slideCount}枚）`);
+// 再読み込みしても初回案内は出ない
+await page.reload({ waitUntil: 'load' });
+await page.waitForSelector('text=囲碁サッカー', { timeout: 15000 });
+const welcomeAgain = await page.locator('#overlay-welcome:not(.hidden)').count();
+if (welcomeAgain !== 0) {
+  console.error('NG: 2回目の訪問でも初回案内が表示された');
+  process.exitCode = 1;
+} else {
+  console.log('2回目の訪問では初回案内が出ないことを確認');
+}
+
 console.log('NPC対局開始…');
 await page.click('#btn-npc-start');
 await page.waitForSelector('#board-canvas', { timeout: 15000 });
@@ -71,9 +99,10 @@ if (placed) {
 
 // サウンドトグルの動作確認（合成音はクリックフロー全体で発火済み。エラーが出ないこと）
 console.log('サウンドトグルテスト…');
+const bgmBefore = (await page.textContent('#btn-bgm')).trim();
 await page.click('#btn-bgm');
 let bgmLabel = (await page.textContent('#btn-bgm')).trim();
-if (!bgmLabel.includes('OFF')) {
+if (bgmLabel === bgmBefore) {
   console.error(`NG: BGMトグルが効かない: ${bgmLabel}`);
   process.exitCode = 1;
 }
@@ -82,6 +111,10 @@ await page.click('#btn-se');
 await page.click('#btn-se');
 bgmLabel = (await page.textContent('#btn-bgm')).trim();
 const seLabel = (await page.textContent('#btn-se')).trim();
+if (bgmLabel !== bgmBefore) {
+  console.error(`NG: BGMトグルが元に戻らない: ${bgmLabel}`);
+  process.exitCode = 1;
+}
 console.log(`サウンドトグルOK（${bgmLabel} / ${seLabel}）`);
 
 // 回転操作（縦方向に大きくドラッグ — 旧OrbitControlsでは極でロックしていた動き）
