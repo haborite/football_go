@@ -610,6 +610,53 @@ function kifuUrlFor(komi: number, moves: number[]): string {
   return `${location.origin}${location.pathname}?kifu=${encodeKifu(komi, moves)}`;
 }
 
+// ---------- X（Twitter）共有 ----------
+
+const NPC_LEVEL_NAMES: Record<number, string> = {
+  600: '初級',
+  1800: '中級',
+  4000: '上級',
+  8000: '最強',
+};
+
+/** 終局した対局の結果をX投稿用の一文にする（終局前は null） */
+function buildShareText(): string | null {
+  if (!session || session.kind === 'replay' || !session.game.over) return null;
+  const g = session.game;
+  const s = g.score();
+  const opp =
+    session.kind === 'npc'
+      ? `NPC（${NPC_LEVEL_NAMES[session.timeMs] ?? '？'}）`
+      : 'オンライン対戦';
+  let result: string;
+  if (s.winner === 'draw') {
+    result = session.kind === 'npc' ? `${opp}と持碁（引き分け）` : `${opp}で持碁（引き分け）`;
+  } else {
+    const youWin = (s.winner === 'black' ? BLACK : WHITE) === session.myColor;
+    const how = s.byResign !== undefined ? '中押し' : `${Math.abs(s.margin)}目`;
+    const outcome = youWin ? `${how}勝ち！` : `${how}負け…`;
+    result = session.kind === 'npc' ? `${opp}に${outcome}` : `${opp}で${outcome}`;
+  }
+  const detail =
+    s.byResign !== undefined
+      ? ''
+      : `（黒${s.black}子・白${s.white}子${g.komi !== 0 ? `＋コミ${g.komi}` : ''}）`;
+  return `球面で打つ囲碁「囲碁サッカー」⚽ ${result}${detail} #囲碁サッカー`;
+}
+
+function shareResultToX() {
+  const text = buildShareText();
+  if (!text || !session || session.kind === 'replay') return;
+  const moves = logToMoves(session.game.moveLog);
+  // 棋譜URLを添えて、見た人がそのまま対局を再生できるようにする
+  const url =
+    moves.length > 0
+      ? kifuUrlFor(session.game.komi, moves)
+      : `${location.origin}${location.pathname}`;
+  const intent = `https://x.com/intent/post?text=${encodeURIComponent(`${text}\n`)}&url=${encodeURIComponent(url)}`;
+  window.open(intent, '_blank', 'noopener,noreferrer');
+}
+
 async function copyKifuUrl(komi: number, moves: number[]) {
   if (moves.length === 0) {
     toast('まだ着手がありません');
@@ -745,6 +792,8 @@ $('btn-review').addEventListener('click', () => {
   const moves = logToMoves(session.game.moveLog);
   startReplay(komi, moves, moves.length);
 });
+
+$('btn-share-x').addEventListener('click', shareResultToX);
 
 $('btn-kifu-copy').addEventListener('click', () => {
   if (!session) return;

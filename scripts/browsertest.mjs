@@ -142,6 +142,35 @@ if (!resignText.includes('中押し勝ち')) {
 }
 await page.screenshot({ path: 'scripts/shots/07-resign.png' });
 
+// X共有: window.open を横取りしてインテントURLを検証（外部サイトは開かない）
+console.log('X共有テスト…');
+const intentUrl = await page.evaluate(() => {
+  let captured = null;
+  const orig = window.open;
+  window.open = (u) => {
+    captured = String(u);
+    return null;
+  };
+  document.getElementById('btn-share-x').click();
+  window.open = orig;
+  return captured;
+});
+if (!intentUrl || !intentUrl.startsWith('https://x.com/intent/post?')) {
+  console.error(`NG: X共有のインテントURLが不正: ${intentUrl}`);
+  process.exitCode = 1;
+} else {
+  // 先頭の const URL がグローバルの URL を隠しているため URLSearchParams で解析する
+  const params = new URLSearchParams(intentUrl.slice(intentUrl.indexOf('?') + 1));
+  const text = params.get('text') ?? '';
+  const url = params.get('url') ?? '';
+  if (!text.includes('囲碁サッカー') || !text.includes('中押し負け') || !url.includes('?kifu=')) {
+    console.error(`NG: X共有の内容が不正: text=${text} url=${url}`);
+    process.exitCode = 1;
+  } else {
+    console.log(`X共有OK（${text.trim()}）`);
+  }
+}
+
 // 棋譜URL再生モード
 console.log('棋譜再生モードテスト…');
 // kifu形式: [1, コミ*2, ...手] を Base64URL 化。コミ6.5、黒0→白10 の2手
