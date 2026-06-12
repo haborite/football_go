@@ -199,7 +199,7 @@ function buildSlides(): Slide[] {
       title: '囲むと取れる',
       svg: s2,
       body:
-        '石から線でつながった<strong>となりの空き点</strong>が、その石の「<strong>いき</strong>」です。' +
+        '石から線でつながった<strong>となりの空き点</strong>が、その石の「<strong>呼吸点</strong>」です。' +
         '呼吸点を相手に<strong>全部ふさがれる</strong>と、石は取られて盤から消えます。' +
         'くっついている味方の石どうしは、ひとつのかたまりとして同じ運命になります。',
     },
