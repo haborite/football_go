@@ -149,7 +149,7 @@ function buildSlides(): Slide[] {
       'translate(366,6) scale(0.92)'
     ) +
     ARROW +
-    caption(137, 282, '黒の「いき」は のこり1つ！') +
+    caption(137, 282, '黒の「呼吸点」は のこり1つ！') +
     caption(495, 282, '白に置かれると…取られて消える！') +
     `</svg>`;
 
@@ -183,16 +183,16 @@ function buildSlides(): Slide[] {
       'translate(366,6) scale(0.92)'
     ) +
     caption(137, 282, '埋めすぎ → まるごと取られる！', '#ff8c7a') +
-    caption(495, 282, '空き点2つ → ぜったい取られない！', '#ffd76e') +
+    caption(495, 282, '空き点2つ → 絶対に取られない！', '#ffd76e') +
     `</svg>`;
 
   return [
     {
-      title: '線の交わる点に、こうたいで置く',
+      title: '線の交わる点に、交代で置く',
       svg: s1,
       body:
         'サッカーボール型の碁盤です。黒と白が、<strong>線の交わる点</strong>（全部で60か所）に' +
-        '<strong>こうたいで</strong>石を置いていきます。黒が先です。' +
+        '<strong>交代で</strong>石を置いていきます。黒が先です。' +
         '黄色の印のように、<strong>空いている点ならどこでもOK</strong>。一度置いた石は動かせません。',
     },
     {
@@ -200,7 +200,7 @@ function buildSlides(): Slide[] {
       svg: s2,
       body:
         '石から線でつながった<strong>となりの空き点</strong>が、その石の「<strong>いき</strong>」です。' +
-        'いきを相手に<strong>全部ふさがれる</strong>と、石は取られて盤から消えます。' +
+        '呼吸点を相手に<strong>全部ふさがれる</strong>と、石は取られて盤から消えます。' +
         'くっついている味方の石どうしは、ひとつのかたまりとして同じ運命になります。',
     },
     {
