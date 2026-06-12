@@ -162,6 +162,47 @@ button.danger:hover {
   margin: 6px 0;
 }
 
+/* GitHubコーナー（タイトル画面の右肩） */
+.github-corner {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.github-corner svg {
+  display: block;
+  fill: #ffd76e; /* 三角の地 */
+  color: #131826; /* 八角猫の抜き色 */
+}
+
+.github-corner:hover svg {
+  fill: #ffe49b;
+}
+
+.github-corner .octo-arm {
+  transform-origin: 130px 106px;
+}
+
+.github-corner:hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out;
+}
+
+@keyframes octocat-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(-25deg);
+  }
+  40%,
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
 .tutorial-row {
   text-align: center;
   margin: -16px 0 28px;
@@ -481,6 +522,24 @@ button.danger:hover {
   flex: 1;
   font-size: 13px;
   padding: 9px 4px;
+}
+
+#share-text {
+  display: block;
+  width: 100%;
+  margin: 10px 0 0;
+  background: #131826;
+  border: 1px solid #3a4663;
+  border-radius: 8px;
+  color: #9aa6c0;
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 7px 9px;
+  resize: none;
+  overflow-y: auto;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 #btn-share-x {

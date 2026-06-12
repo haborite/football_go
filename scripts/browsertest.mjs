@@ -22,6 +22,15 @@ await page.waitForSelector('text=囲碁サッカー', { timeout: 15000 });
 await page.screenshot({ path: 'scripts/shots/01-title.png' });
 console.log('タイトル画面OK → スクリーンショット保存');
 
+// GitHubコーナー（リポジトリへのリンク）
+const ghHref = await page.getAttribute('.github-corner', 'href');
+if (ghHref !== 'https://github.com/haborite/football_go') {
+  console.error(`NG: GitHubコーナーのリンクが不正: ${ghHref}`);
+  process.exitCode = 1;
+} else {
+  console.log('GitHubコーナーOK');
+}
+
 // 初回訪問: かんたんルール説明の案内 → スライドを最後までめくる
 console.log('チュートリアルテスト…');
 await page.waitForSelector('#overlay-welcome:not(.hidden)', { timeout: 5000 });
@@ -142,8 +151,15 @@ if (!resignText.includes('中押し勝ち')) {
 }
 await page.screenshot({ path: 'scripts/shots/07-resign.png' });
 
-// SNS共有: window.open を横取りして共有URLを検証（外部サイトは開かない）
+// SNS共有: コピペ用テキストと、window.open を横取りした共有URLを検証（外部サイトは開かない）
 console.log('SNS共有テスト…');
+const shareBoxText = await page.inputValue('#share-text');
+if (!shareBoxText.includes('囲碁サッカー') || !shareBoxText.includes('?kifu=')) {
+  console.error(`NG: コピペ用共有テキストが不正: ${shareBoxText}`);
+  process.exitCode = 1;
+} else {
+  console.log('コピペ用共有テキストOK');
+}
 const shareCases = [
   { id: 'btn-share-x', name: 'X', prefix: 'https://x.com/intent/post?' },
   { id: 'btn-share-misskey', name: 'Misskey', prefix: 'https://misskey-hub.net/share/?' },

@@ -228,6 +228,11 @@ function showResult() {
     marginText;
   $('result-undo').textContent = `待った：黒 ${undo[BLACK]}回 ／ 白 ${undo[WHITE]}回`;
 
+  // コピペ用の共有テキスト（共有文＋棋譜URL）
+  const share = shareContent();
+  const shareBox = $('share-text') as HTMLTextAreaElement;
+  shareBox.value = share ? `${share.text}\n${share.url}` : '';
+
   $('btn-rematch').classList.toggle('hidden', session.kind !== 'npc');
   const overlay = $('overlay-result');
   const wasHidden = overlay.classList.contains('hidden');
@@ -835,6 +840,10 @@ $('btn-review').addEventListener('click', () => {
 $('btn-share-x').addEventListener('click', shareResultToX);
 $('btn-share-misskey').addEventListener('click', shareResultToMisskey);
 $('btn-share-mastodon').addEventListener('click', shareResultToMastodon);
+// コピペ用テキストはクリック（フォーカス）で全選択
+$('share-text').addEventListener('focus', () => {
+  ($('share-text') as HTMLTextAreaElement).select();
+});
 
 $('btn-kifu-copy').addEventListener('click', () => {
   if (!session) return;
