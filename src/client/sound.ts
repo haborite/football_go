@@ -383,11 +383,11 @@ class SoundManager {
         if (this.bgmDegree < 0) this.bgmDegree = 0;
         if (this.bgmDegree >= SCALE_SEMITONES.length) this.bgmDegree = SCALE_SEMITONES.length - 1;
         const f = SCALE_BASE * Math.pow(2, SCALE_SEMITONES[this.bgmDegree] / 12);
-        this.pluck(t, f, 0.9);
+        // this.pluck(t, f, 0.9);
         // たまに装飾音（隣の音を素早く）
         if (Math.random() < 0.18 && this.bgmDegree > 0) {
           const f2 = SCALE_BASE * Math.pow(2, SCALE_SEMITONES[this.bgmDegree - 1] / 12);
-          this.pluck(t + 0.16, f2, 0.5);
+          // this.pluck(t + 0.16, f2, 0.5);
         }
       }
       this.bgmNextTime += 0.85 + Math.random() * 0.5;
@@ -429,7 +429,7 @@ class SoundManager {
       this.bgmNodes = [crowd, lfo, drone];
       this.bgmNextTime = ctx.currentTime + 0.3;
       this.bgmDegree = 4;
-      // this.bgmTimer = window.setInterval(() => this.scheduleBgm(), 200);
+      this.bgmTimer = window.setInterval(() => this.scheduleBgm(), 200);
     } catch {
       /* ignore */
     }
