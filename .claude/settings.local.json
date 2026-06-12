@@ -22,7 +22,9 @@
       "PowerShell(npm run *)",
       "PowerShell(npm test *)",
       "PowerShell(node scripts/browsertest.mjs; echo \"E2E_EXIT:$LASTEXITCODE\")",
-      "PowerShell(node scripts/tutshots.mjs; echo \"EXIT:$LASTEXITCODE\")"
+      "PowerShell(node scripts/tutshots.mjs; echo \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(npx tsx scripts/ogpimage.ts; echo \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(\\(Invoke-WebRequest -UseBasicParsing http://localhost:5173/ogp.png\\).StatusCode; node scripts/browsertest.mjs; echo \"E2E_EXIT:$LASTEXITCODE\")"
     ]
   }
 }

@@ -11,7 +11,8 @@
     "test": "tsx src/shared/selftest.ts",
     "test:npc": "tsx src/shared/npctest.ts",
     "test:e2e": "tsx src/server/e2etest.ts",
-    "test:browser": "node scripts/browsertest.mjs"
+    "test:browser": "node scripts/browsertest.mjs",
+    "ogp": "tsx scripts/ogpimage.ts"
   },
   "dependencies": {
     "three": "^0.169.0",

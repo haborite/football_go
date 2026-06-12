@@ -142,32 +142,43 @@ if (!resignText.includes('中押し勝ち')) {
 }
 await page.screenshot({ path: 'scripts/shots/07-resign.png' });
 
-// X共有: window.open を横取りしてインテントURLを検証（外部サイトは開かない）
-console.log('X共有テスト…');
-const intentUrl = await page.evaluate(() => {
-  let captured = null;
-  const orig = window.open;
-  window.open = (u) => {
-    captured = String(u);
-    return null;
-  };
-  document.getElementById('btn-share-x').click();
-  window.open = orig;
-  return captured;
-});
-if (!intentUrl || !intentUrl.startsWith('https://x.com/intent/post?')) {
-  console.error(`NG: X共有のインテントURLが不正: ${intentUrl}`);
-  process.exitCode = 1;
-} else {
+// SNS共有: window.open を横取りして共有URLを検証（外部サイトは開かない）
+console.log('SNS共有テスト…');
+const shareCases = [
+  { id: 'btn-share-x', name: 'X', prefix: 'https://x.com/intent/post?' },
+  { id: 'btn-share-misskey', name: 'Misskey', prefix: 'https://misskey-hub.net/share/?' },
+  { id: 'btn-share-mastodon', name: 'Mastodon', prefix: 'https://mastodon.social/share?' },
+];
+for (const c of shareCases) {
+  const shareUrl = await page.evaluate((id) => {
+    let captured = null;
+    const origOpen = window.open;
+    const origPrompt = window.prompt;
+    window.open = (u) => {
+      captured = String(u);
+      return null;
+    };
+    window.prompt = (_msg, def) => def; // Mastodonのサーバー名入力はデフォルトで確定
+    document.getElementById(id).click();
+    window.open = origOpen;
+    window.prompt = origPrompt;
+    return captured;
+  }, c.id);
+  if (!shareUrl || !shareUrl.startsWith(c.prefix)) {
+    console.error(`NG: ${c.name}共有のURLが不正: ${shareUrl}`);
+    process.exitCode = 1;
+    continue;
+  }
   // 先頭の const URL がグローバルの URL を隠しているため URLSearchParams で解析する
-  const params = new URLSearchParams(intentUrl.slice(intentUrl.indexOf('?') + 1));
+  const params = new URLSearchParams(shareUrl.slice(shareUrl.indexOf('?') + 1));
   const text = params.get('text') ?? '';
   const url = params.get('url') ?? '';
-  if (!text.includes('囲碁サッカー') || !text.includes('中押し負け') || !url.includes('?kifu=')) {
-    console.error(`NG: X共有の内容が不正: text=${text} url=${url}`);
+  const hasKifu = url.includes('?kifu=') || text.includes('?kifu=');
+  if (!text.includes('囲碁サッカー') || !text.includes('中押し負け') || !hasKifu) {
+    console.error(`NG: ${c.name}共有の内容が不正: text=${text} url=${url}`);
     process.exitCode = 1;
   } else {
-    console.log(`X共有OK（${text.trim()}）`);
+    console.log(`${c.name}共有OK`);
   }
 }
 

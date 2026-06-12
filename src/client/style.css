@@ -467,14 +467,47 @@ button.danger:hover {
   justify-content: center;
 }
 
-#btn-share-x {
+.share-label {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #707b96;
+}
+
+.share-row {
+  margin-top: 6px;
+}
+
+.share-row button {
   flex: 1;
+  font-size: 13px;
+  padding: 9px 4px;
+}
+
+#btn-share-x {
   background: #0f1419;
   border-color: #3d4754;
 }
 
 #btn-share-x:hover {
   background: #1f2732;
+}
+
+#btn-share-misskey {
+  background: #2e3a14;
+  border-color: #86b300;
+}
+
+#btn-share-misskey:hover {
+  background: #3d4d1b;
+}
+
+#btn-share-mastodon {
+  background: #292b54;
+  border-color: #6364ff;
+}
+
+#btn-share-mastodon:hover {
+  background: #343770;
 }
 
 /* ---------- かんたんルール説明（チュートリアル） ---------- */

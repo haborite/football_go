@@ -610,7 +610,7 @@ function kifuUrlFor(komi: number, moves: number[]): string {
   return `${location.origin}${location.pathname}?kifu=${encodeKifu(komi, moves)}`;
 }
 
-// ---------- X（Twitter）共有 ----------
+// ---------- SNS共有（X / Misskey / Mastodon） ----------
 
 const NPC_LEVEL_NAMES: Record<number, string> = {
   600: '初級',
@@ -644,17 +644,56 @@ function buildShareText(): string | null {
   return `球面で打つ囲碁「囲碁サッカー」⚽ ${result}${detail} #囲碁サッカー`;
 }
 
-function shareResultToX() {
+/** 共有する本文と棋譜URL（見た人がそのまま対局を再生できる） */
+function shareContent(): { text: string; url: string } | null {
   const text = buildShareText();
-  if (!text || !session || session.kind === 'replay') return;
+  if (!text || !session || session.kind === 'replay') return null;
   const moves = logToMoves(session.game.moveLog);
-  // 棋譜URLを添えて、見た人がそのまま対局を再生できるようにする
   const url =
     moves.length > 0
       ? kifuUrlFor(session.game.komi, moves)
       : `${location.origin}${location.pathname}`;
-  const intent = `https://x.com/intent/post?text=${encodeURIComponent(`${text}\n`)}&url=${encodeURIComponent(url)}`;
-  window.open(intent, '_blank', 'noopener,noreferrer');
+  return { text, url };
+}
+
+function openShare(buildUrl: (c: { text: string; url: string }) => string | null) {
+  const c = shareContent();
+  if (!c) return;
+  const shareUrl = buildUrl(c);
+  if (shareUrl) window.open(shareUrl, '_blank', 'noopener,noreferrer');
+}
+
+function shareResultToX() {
+  openShare(
+    (c) =>
+      `https://x.com/intent/post?text=${encodeURIComponent(`${c.text}\n`)}&url=${encodeURIComponent(c.url)}`
+  );
+}
+
+function shareResultToMisskey() {
+  // インスタンスを問わない公式の共有ページ経由（接続先を選んでノートできる）
+  openShare(
+    (c) =>
+      `https://misskey-hub.net/share/?text=${encodeURIComponent(c.text)}&url=${encodeURIComponent(c.url)}&visibility=public`
+  );
+}
+
+const LS_MASTODON_HOST = 'gofb-mastodon-host';
+
+function shareResultToMastodon() {
+  openShare((c) => {
+    // Mastodonは共通の共有ページがないため、サーバー名を一度聞いて記憶する
+    const saved = localStorage.getItem(LS_MASTODON_HOST) || 'mastodon.social';
+    const input = window.prompt(
+      'あなたのMastodonサーバー名を入力してください（例: mastodon.social）',
+      saved
+    );
+    if (input === null) return null;
+    const host = input.trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+    if (!host) return null;
+    localStorage.setItem(LS_MASTODON_HOST, host);
+    return `https://${host}/share?text=${encodeURIComponent(`${c.text}\n${c.url}`)}`;
+  });
 }
 
 async function copyKifuUrl(komi: number, moves: number[]) {
@@ -794,6 +833,8 @@ $('btn-review').addEventListener('click', () => {
 });
 
 $('btn-share-x').addEventListener('click', shareResultToX);
+$('btn-share-misskey').addEventListener('click', shareResultToMisskey);
+$('btn-share-mastodon').addEventListener('click', shareResultToMastodon);
 
 $('btn-kifu-copy').addEventListener('click', () => {
   if (!session) return;
